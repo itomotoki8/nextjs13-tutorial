@@ -1,11 +1,16 @@
 import Link from "next/link";
+import { headers } from 'next/headers'
 
 type Todo = {
   title: string;
 };
 
 async function getData() {
-  const res = await fetch("http://localhost:3000/api/todos", {
+  const headersData = headers();
+  const host:any = headersData.get('host');
+  const protocol = headersData.get('x-forwarded-proto') ?? host.startWith('localhost') ? 'http' : 'https';
+  const apiBase = `${protocol}://${host}`;
+  const res = await fetch(`${apiBase}/api/todos`, {
     next: {
       revalidate: 10,
     },
